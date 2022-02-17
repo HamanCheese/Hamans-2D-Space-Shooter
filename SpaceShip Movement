@@ -1,0 +1,67 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpaceShip_Move : MonoBehaviour
+{
+    
+    public float maxspeed = 5f;
+    public float rotspeed = 180f;
+
+    float BondaryRadius =0.7f;
+
+
+    void Start()
+    {
+        
+    }
+
+    
+    void Update()
+    {
+      //rotate
+
+      Quaternion rot = transform.rotation;
+
+      float z = rot.eulerAngles.z;
+
+      z -= Input.GetAxis("Horizontal") * rotspeed * Time.deltaTime;
+
+      rot = Quaternion.Euler( 0, 0, z );
+
+      transform.rotation = rot;
+
+
+     //move
+      Vector3 pos = transform.position;
+      //Input.GetAxis("Vertical");
+
+      Vector3 velocity = new Vector3 (0, Input.GetAxis("Vertical") * maxspeed * Time.deltaTime, 0);
+
+      pos += rot* velocity;
+      //boundary
+      if(pos.y+BondaryRadius > Camera.main.orthographicSize){
+          pos.y = Camera.main.orthographicSize - BondaryRadius; 
+      }
+
+       if(pos.y-BondaryRadius < -Camera.main.orthographicSize){
+          pos.y = -Camera.main.orthographicSize + BondaryRadius; 
+      }
+
+      float screenRatio = (float)Screen.width /(float)Screen.height;
+      float widthOrtho = Camera.main.orthographicSize * screenRatio;
+
+      if(pos.x+BondaryRadius > widthOrtho){
+          pos.x = widthOrtho - BondaryRadius; 
+      }
+
+       if(pos.x-BondaryRadius < -widthOrtho){
+          pos.x = -widthOrtho + BondaryRadius; 
+      }
+
+
+
+      transform.position = pos;
+
+    }
+}
